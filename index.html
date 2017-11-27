@@ -1,122 +1,162 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 <html>
 <head>
-	<title>LanzaMonedas</title>
+	<title>AHORCADO</title>
 	<script language="javascript">
-	function corrigeImagen(){
-		document.getElementById("imagen").src="img/nada.jpg";
-		document.getElementById("cara").src="img/cara.jpg";
-		document.getElementById("cruz").src="img/cruz.jpg";
-		document.getElementById("wins").innerHTML = "<b>Ganadas:</b> "+ganadas+"   <b>Perdidas:</b> "+perdidas;
+	function imagenPrimera(){
+		document.getElementById("imagen").src="img/ahorcado0.jpg";
+		empiezaJuego();
 	}
 	</script>
 </head>
-<body onload="corrigeImagen();">
-     <script language="javascript">
-		var monedaelegida=0;
-		var monedas=["img/cruz.jpg","img/cara.jpg"];
-		var nombremon=["cruz","cara"];
-		var aleatorio;
-		var caramoneda=0;
-		var ganadas=0;
-		var perdidas=0;
-		var hacerfunc=true;
-		function reinicio(){
-			document.getElementById("oculto").style.display = 'none';
-			document.getElementById("imagen").src="img/nada.jpg";
-			document.getElementById("cara").src="img/cara.jpg";
-			document.getElementById("cruz").src="img/cruz.jpg";
-			var aleatorio=Math.round(Math.random());
+
+	<body onload="imagenPrimera();">
+		<script language="javascript">
+			var palabra;
+			var nula=[];
+			var arrayPalabra=[];
+			var letras=[];
+			var fallos=0;
+			var imagenes=["img/ahorcado0.jpg","img/ahorcado1.jpg","img/ahorcado2.jpg","img/ahorcado3.jpg","img/ahorcado4.jpg","img/ahorcado5.jpg","img/ahorcado6.jpg"];
 			var count=0;
-			document.getElementById("salida").innerHTML = "";
-			document.getElementById("mensaje").innerHTML = "";
-			hacerfunc=true;
-		}
-		
-		function randommoneda(monedatuya){
-		aleatorio=Math.round(Math.random());
-		var count=0;
-		var hola=setInterval(function(){
-			if(caramoneda==1){
-				document.getElementById("imagen").src=monedas[caramoneda];
-				caramoneda=0;
-			} else{
-				document.getElementById("imagen").src=monedas[caramoneda];
-				caramoneda=1;
+			function reiniciar(){
+				document.getElementById("ocultoSegundo").style.display = 'none';
+				palabra;
+				nula=[];
+				arrayPalabra=[];
+				letras=[];
+				fallos=0;
+				document.getElementById("imagen").src="img/ahorcado0.jpg";
+				document.getElementById("letrasUsadas").innerHTML=letras.join(" ");
+				document.getElementById("final").style.display = 'none';
+				document.getElementById("reinicio").style.display = 'none';
+				empiezaJuego();
 			}
-			count++;
-			if(count >= 20) {
-				clearInterval(hola);
-				document.getElementById("imagen").src=monedas[aleatorio];
-				comprueba(monedatuya);
+			
+			function empiezaJuego(){
+				if(count<11){
+				var palabras=["alfalfa","pene","nazis", "teledirigido", "colacao", "agua", "botella", "enchufe", "dragon", "raton", "terminado"];
+				palabra = palabras[count];
+				count++;
+				if(palabra.match(/^[a-z]*$/)==null){
+					alert("No debes usar mayusculas, numeros, caracteres no alfabeticos o ñ");
+				} else if(palabra==""){
+					alert("No hay nada introducido");
+				}else{
+					document.getElementById("ocultoSegundo").style.display = 'block';
+					document.getElementById("ocultoTercero").style.display = 'block';
+					arrayPalabra=palabra.split("");
+					var random=Math.round(Math.random()*(arrayPalabra.length-1));
+					var letraR=arrayPalabra[random];
+					letras[0]=letraR;
+					document.getElementById("letrasUsadas").innerHTML=letras.join(" ");
+					for(var i = 0;i<arrayPalabra.length;i++){
+						if(letraR!=arrayPalabra[i]){
+							nula[i]="_";
+						} else{
+							nula[i]=letraR;
+						}
+					}
+					document.getElementById("palabraFraccionada").innerHTML=nula.join(" ");
+					document.getElementById("letraIntroducida").focus();
+				}
 			}
-			}, 150);
-		}
-		
-		function funcion(caraeleg){
-		if(hacerfunc==true){
-		if (caraeleg==1){
-		document.getElementById("cruz").src="img/nada.jpg";
-		document.getElementById("cara").src="img/cara.jpg";
-		
-		alert("Has elegido cara");
-		} else if (caraeleg==0){
-		document.getElementById("cara").src="img/nada.jpg";
-		document.getElementById("cruz").src="img/cruz.jpg";
-		
-		alert("Has elegido cruz");
-		} 
+			}
+			
+			function validaLetra(e){
+			var codLetra=e.which||e.keycode;
+			comprobado=true;
+			ganador=true;
+				if(codLetra<97){
+					alert("No debes usar mayusculas, numeros, caracteres no alfabeticos o ñ");
+					document.getElementById("letraIntroducida").value="";
+				} else if(codLetra>122){
+					alert("No debes usar mayusculas, numeros o caracteres no alfabeticos");
+					document.getElementById("letraIntroducida").value="";
+				} else{
+					var letra=String.fromCharCode(codLetra);
+					for(var i = 0;i<letras.length;i++){
+						if(letras[i]==letra){
+							alert("Letra ya introducida");
+							comprobado=false
+						}
+					}
+					if(comprobado==true){
+						letras[i+1]=letra;
+						document.getElementById("letrasUsadas").innerHTML=letras.join(" ");
+						compruebaLetra(letra);
+					}
+					for(var j = 0;j<nula.length;j++){
+						if(nula[j]=="_"){
+							ganador=false;
+						}
+					}
+					ganpierd();
+				}
+			document.getElementById("letraIntroducida").value="";
+			}
+			
+			function ganpierd(){
+				document.getElementById("imagen").src=imagenes[fallos];
+				if(ganador==true){
+					document.getElementById("final").style.display = 'block';
+					document.getElementById("solucion").innerHTML="HAS GANADO"
+					document.getElementById("ocultoTercero").style.display = 'none';
+					document.getElementById("reinicio").style.display = 'block';
+				} else if (fallos>=6){
+					document.getElementById("final").style.display = 'block';
+					document.getElementById("solucion").innerHTML="HAS PERDIDO, la solución es: "+palabra;
+					document.getElementById("ocultoTercero").style.display = 'none';
+					document.getElementById("reinicio").style.display = 'block';
+				}
+			}
+			function compruebaLetra(letra){
+				var existe=false;
+				for(var i = 0;i<arrayPalabra.length;i++){
+					if(arrayPalabra[i]==letra){
+						existe=true;
+					}
+				}
+				if(existe==true){
+					for(var j = 0;j<arrayPalabra.length;j++){
+						if(arrayPalabra[j]==letra){
+							nula[j]=letra;
+						}
+					}
+				} else{
+					fallos++;
+				}
+				document.getElementById("palabraFraccionada").innerHTML=nula.join(" ");
+			}
 
-		document.getElementById("salida").innerHTML = "La moneda salida es:";
-		randommoneda(caraeleg);
-		hacerfunc=false;
-		}
-		}
+		</script>
+		<h1 style="margin-left: 50px;margin-top: 20px;">AHORCADO</h1>
+		<p style="margin-left: 50px;margin-top: 20px;"><b>No usar mayusculas, numeros, caracteres no alfabeticos o "ñ", gracias.</b></p>
+		<div id="ocultoSegundo" style="float:left;width:50%;display:none;margin-left: 50px;margin-top: 30px;">
+			Introduce las letras para comprobar si estan dentro de la palabra oculta <br>
+			<h2 id="palabraFraccionada"></h2>
+			<br><br>
+		</div>
+		<div style="float:right;width:38%;margin-top: 30px;">
+			<img src="" id="imagen"
+				alt="ahorcado"/>
+		</div>
+		<div id="ocultoTercero" style="float:left;width:50%;display:none;margin-left: 50px;margin-top: 30px;">
+			<label>Introduce letra que quieres comprobar: </label>
+			<input type="text" style="width:25px" id="letraIntroducida" maxlength="1" onkeypress="validaLetra(event);">
+			<br><br>
+			<b>Letras introducidas:</b>
+			<h3 id="letrasUsadas"></h3>
+		</div>
+		<div id="reinicio" style="float:left;width:50%;margin-left: 50px;margin-top: 30px;display:none;">
+			<input type="button" value="Reinicio" name="comprobar" id="w" onclick="reiniciar();" style="margin-left: 10px;" autofocus>
+		</div>
 		
-		function comprueba(monedaeleg){
-		if(aleatorio == monedaeleg){
-			document.getElementById("salida").innerHTML = "La moneda salida es: "+ nombremon[aleatorio];
-			document.getElementById("mensaje").innerHTML = "<b>HAS GANADO</b>";
-			document.getElementById("oculto").style.display = 'block';
-			ganadas++;
-			document.getElementById("wins").innerHTML = "<b>Ganadas:</b> "+ganadas+"   <b>Perdidas:</b> "+perdidas;
-		} else{
-			document.getElementById("salida").innerHTML = "La moneda salida es: "+ nombremon[aleatorio];
-			document.getElementById("mensaje").innerHTML = "<b>HAS PERDIDO</b>";
-			document.getElementById("oculto").style.display = 'block';
-			perdidas++;
-			document.getElementById("wins").innerHTML = "Ganadas: "+ganadas+"   Perdidas: "+perdidas;
-		}
-		}
-     </script>
-
-	 <h1 align="center">ELIGE UNA OPCION</h1>
-	 <p id="wins" align="center"></p>
-	 <p align="center">Selecciona la imagen para elegir la cara de la moneda que desees: </p>
-	 <div style="width:49%;heigth:400px;text-align:center;float:left;border:1px solid;">
-	 <br>
-	 <img src="" id="cruz"
-				alt="cruz" onclick="funcion(0);" style="height: 200px;width: 200px;margin-top: 11px;"/>
-	<br><br>
-	 </div>
-	 <div style="width:50%;heigth:400px;text-align:center;float:left;border:1px solid;">
-	 <br>
-	 
-	 <img src="" id="cara"
-				alt="cara" onclick="funcion(1);" style="height: 200px;width: 200px;margin-top: 11px;"/>
-	<br><br>
-	 </div>
-	 <div align="center" style="text-align:center;float:left;width:100%">
-	 <p id="salida" style="margin-top:20px"></p>
-	 <img src="" id="imagen"
-				alt="aleatorio" style="height: 150px;width: 150px;margin-top: 11px;"/>
-	<br>
-	 </div>
-	 <div id="oculto" align="center" style="text-align:center;float:left;width:100%;display:none;">
-	 <p id="mensaje"></p>	
-	 <input type="button" value="Tirar de nuevo" name="iniciador" id="a" onclick="reinicio();" />
-	 <br><br><br><br>
-	 </div>
-</body>
+		</br></br></br>
+		<div id="final" style="float:right;width:38%;margin-top: 30px;display:none;">
+			<h1 id="solucion"></h1>
+		</div>
+	</body>
 </html>
