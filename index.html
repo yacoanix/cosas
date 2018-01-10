@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<html>
+<head>
+	<title>AHORCADO</title>
+	<script language="javascript">
+	function imagenPrimera(){
+		document.getElementById("imagen").src="img/ahorcado0.jpg";
+		empiezaJuego();
+	}
+	</script>
+</head>
+
+	<body onload="imagenPrimera();">
+		<script language="javascript">
+			var palabra;
+			var nula=[];
+			var arrayPalabra=[];
+			var letras=[];
+			var fallos=0;
+			var imagenes=["img/ahorcado0.jpg","img/ahorcado1.jpg","img/ahorcado2.jpg","img/ahorcado3.jpg","img/ahorcado4.jpg","img/ahorcado5.jpg","img/ahorcado6.jpg"];
+			var count=0;
+			function reiniciar(){
+				document.getElementById("ocultoSegundo").style.display = 'none';
+				palabra;
+				nula=[];
+				arrayPalabra=[];
+				letras=[];
+				fallos=0;
+				document.getElementById("imagen").src="img/ahorcado0.jpg";
+				document.getElementById("letrasUsadas").innerHTML=letras.join(" ");
+				document.getElementById("final").style.display = 'none';
+				document.getElementById("reinicio").style.display = 'none';
+				empiezaJuego();
+			}
+			
+			function empiezaJuego(){
+				if(count<11){
+				var palabras=["alfalfa","pene","nazis", "teledirigido", "colacao", "agua", "botella", "enchufe", "dragon", "raton", "terminado"];
+				palabra = palabras[count];
+				count++;
+				if(palabra.match(/^[a-z]*$/)==null){
+					alert("No debes usar mayusculas, numeros, caracteres no alfabeticos o ñ");
+				} else if(palabra==""){
+					alert("No hay nada introducido");
+				}else{
+					document.getElementById("ocultoSegundo").style.display = 'block';
+					document.getElementById("ocultoTercero").style.display = 'block';
+					arrayPalabra=palabra.split("");
+					var random=Math.round(Math.random()*(arrayPalabra.length-1));
+					var letraR=arrayPalabra[random];
+					letras[0]=letraR;
+					document.getElementById("letrasUsadas").innerHTML=letras.join(" ");
+					for(var i = 0;i<arrayPalabra.length;i++){
+						if(letraR!=arrayPalabra[i]){
+							nula[i]="_";
+						} else{
+							nula[i]=letraR;
+						}
+					}
+					document.getElementById("palabraFraccionada").innerHTML=nula.join(" ");
+					document.getElementById("letraIntroducida").focus();
+				}
+			}
+			}
+			
+			function validaLetra(e){
+			var codLetra=e.which||e.keycode;
+			comprobado=true;
+			ganador=true;
+				if(codLetra<97){
+					alert("No debes usar mayusculas, numeros, caracteres no alfabeticos o ñ");
+					document.getElementById("letraIntroducida").value="";
+				} else if(codLetra>122){
+					alert("No debes usar mayusculas, numeros o caracteres no alfabeticos");
+					document.getElementById("letraIntroducida").value="";
+				} else{
+					var letra=String.fromCharCode(codLetra);
+					for(var i = 0;i<letras.length;i++){
+						if(letras[i]==letra){
+							alert("Letra ya introducida");
+							comprobado=false
+						}
+					}
+					if(comprobado==true){
+						letras[i+1]=letra;
+						document.getElementById("letrasUsadas").innerHTML=letras.join(" ");
+						compruebaLetra(letra);
+					}
+					for(var j = 0;j<nula.length;j++){
+						if(nula[j]=="_"){
+							ganador=false;
+						}
+					}
+					ganpierd();
+				}
+			document.getElementById("letraIntroducida").value="";
+			}
+			
+			function ganpierd(){
+				document.getElementById("imagen").src=imagenes[fallos];
+				if(ganador==true){
+					document.getElementById("final").style.display = 'block';
+					document.getElementById("solucion").innerHTML="HAS GANADO"
+					document.getElementById("ocultoTercero").style.display = 'none';
+					document.getElementById("reinicio").style.display = 'block';
+				} else if (fallos>=6){
+					document.getElementById("final").style.display = 'block';
+					document.getElementById("solucion").innerHTML="HAS PERDIDO, la solución es: "+palabra;
+					document.getElementById("ocultoTercero").style.display = 'none';
+					document.getElementById("reinicio").style.display = 'block';
+				}
+			}
+			function compruebaLetra(letra){
+				var existe=false;
+				for(var i = 0;i<arrayPalabra.length;i++){
+					if(arrayPalabra[i]==letra){
+						existe=true;
+					}
+				}
+				if(existe==true){
+					for(var j = 0;j<arrayPalabra.length;j++){
+						if(arrayPalabra[j]==letra){
+							nula[j]=letra;
+						}
+					}
+				} else{
+					fallos++;
+				}
+				document.getElementById("palabraFraccionada").innerHTML=nula.join(" ");
+			}
+
+		</script>
+		<h1 style="margin-left: 50px;margin-top: 20px;">AHORCADO</h1>
+		<p style="margin-left: 50px;margin-top: 20px;"><b>No usar mayusculas, numeros, caracteres no alfabeticos o "ñ", gracias.</b></p>
+		<div id="ocultoSegundo" style="float:left;width:50%;display:none;margin-left: 50px;margin-top: 30px;">
+			Introduce las letras para comprobar si estan dentro de la palabra oculta <br>
+			<h2 id="palabraFraccionada"></h2>
+			<br><br>
+		</div>
+		<div style="float:right;width:38%;margin-top: 30px;">
+			<img src="" id="imagen"
+				alt="ahorcado"/>
+		</div>
+		<div id="ocultoTercero" style="float:left;width:50%;display:none;margin-left: 50px;margin-top: 30px;">
+			<label>Introduce letra que quieres comprobar: </label>
+			<input type="text" style="width:25px" id="letraIntroducida" maxlength="1" onkeypress="validaLetra(event);">
+			<br><br>
+			<b>Letras introducidas:</b>
+			<h3 id="letrasUsadas"></h3>
+		</div>
+		<div id="reinicio" style="float:left;width:50%;margin-left: 50px;margin-top: 30px;display:none;">
+			<input type="button" value="Reinicio" name="comprobar" id="w" onclick="reiniciar();" style="margin-left: 10px;" autofocus>
+		</div>
+		
+		</br></br></br>
+		<div id="final" style="float:right;width:38%;margin-top: 30px;display:none;">
+			<h1 id="solucion"></h1>
+		</div>
+	</body>
+</html>
